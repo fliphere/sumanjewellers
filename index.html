@@ -1,65 +1,844 @@
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  .hero-slider-container {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 2.35 / 1;
-    overflow: hidden;
-    background-color: #EDE7DE;
-  }
-  .slider-track {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-  }
-  .slide-item { min-width: 100%; height: 100%; }
-  .slide-item img {
-    width: 100%; height: 100%;
-    object-fit: cover; object-position: center; display: block;
-  }
-  .slider-dots {
-    position: absolute; bottom: 12px; left: 50%;
-    transform: translateX(-50%); display: flex; gap: 8px; z-index: 10;
-  }
-  .slider-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: rgba(255,255,255,0.6); cursor: pointer; transition: 0.3s;
-  }
-  .slider-dot.active {
-    background: #D4AF37; width: 22px; border-radius: 10px;
-  }
-</style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Suman Jewellers</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-<div class="hero-slider-container" id="heroSlider">
-  <div class="slider-track" id="sliderTrack">
-    <div class="slide-item"><img src="https://i.pinimg.com/736x/02/99/eb/0299eb634a5d90fb6e3a84587c0b415a.jpg" alt="Slide 1" /></div>
-    <div class="slide-item"><img src="https://i.pinimg.com/736x/59/0c/93/590c9307d61abbafaa9f0a2b6069115d.jpg" alt="Slide 2" /></div>
-    <div class="slide-item"><img src="https://i.pinimg.com/736x/02/99/eb/0299eb634a5d90fb6e3a84587c0b415a.jpg" alt="Slide 3" /></div>
-    <div class="slide-item"><img src="https://i.pinimg.com/736x/59/0c/93/590c9307d61abbafaa9f0a2b6069115d.jpg" alt="Slide 4" /></div>
-  </div>
-  <div class="slider-dots" id="sliderDots">
-    <span class="slider-dot active" data-index="0"></span>
-    <span class="slider-dot" data-index="1"></span>
-    <span class="slider-dot" data-index="2"></span>
-    <span class="slider-dot" data-index="3"></span>
-  </div>
-</div>
+  <style>
+    @font-face {
+      font-family: 'Trajan Pro';
+      src: local('Trajan Pro Regular'), local('Trajan Pro'), local('TrajanPro-Regular');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
 
-<script>
-  const track = document.getElementById('sliderTrack');
-  const dots = document.querySelectorAll('.slider-dot');
-  const slider = document.getElementById('heroSlider');
-  let cur = 0, timer;
-  function show(i) {
-    cur = i;
-    track.style.transform = `translateX(-${cur * 100}%)`;
-    dots.forEach(d => d.classList.remove('active'));
-    dots[cur].classList.add('active');
-  }
-  function auto() { timer = setInterval(() => show((cur + 1) % 4), 3000); }
-  dots.forEach(d => d.onclick = () => show(+d.dataset.index));
-  slider.onmouseenter = () => clearInterval(timer);
-  slider.onmouseleave = auto;
-  auto();
-</script>
+    :root {
+      --bg-cream: #FAF8F5;
+      --bg-card: #FFFFFF;
+      --border: rgba(128, 0, 32, 0.12);
+      --maroon: #800020;
+      --maroon-dark: #4a0012;
+      --gold: #D4AF37;
+      --text-black: #111111;
+      --text-muted: #555555;
+      --text-cream: #F5EFEB;
+      --font-serif: 'Trajan Pro', 'Cinzel', 'Cormorant Garamond', serif;
+      --font-sans: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* SCROLL FIX */
+    html {
+      width: 100%;
+      height: 100%;
+      overflow-y: scroll !important;
+      overflow-x: hidden;
+    }
+
+    body {
+      width: 100%;
+      min-height: 100%;
+      background-color: var(--bg-cream);
+      color: var(--text-black);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      overflow-x: hidden;
+      overflow-y: visible !important;
+    }
+
+    ::selection {
+      background-color: var(--maroon);
+      color: #FFFFFF;
+    }
+
+    /* Custom Cursor */
+    .custom-cursor {
+      pointer-events: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      border-radius: 50%;
+      transition: transform 0.15s ease-out, width 0.2s, height 0.2s;
+      z-index: 99999;
+      transform: translate(-50%, -50%);
+    }
+
+    .cursor-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--maroon);
+    }
+
+    .cursor-ring {
+      width: 36px;
+      height: 36px;
+      border: 1px solid rgba(128, 0, 32, 0.4);
+      background-color: rgba(212, 175, 55, 0.05);
+    }
+
+    body.hovering .cursor-ring {
+      width: 56px;
+      height: 56px;
+      background-color: rgba(128, 0, 32, 0.08);
+      border-color: var(--gold);
+    }
+
+    .page-wrapper {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content-container {
+      width: 100%;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 clamp(1.25rem, 4vw, 4rem) 4rem;
+    }
+
+    /* EXACT 2.35:1 SLIDER + IMAGE SHARPNESS FIX */
+    .hero-slider-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 2.35 / 1;
+      overflow: hidden;
+      margin-bottom: clamp(2.5rem, 4vw, 4.5rem);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      background-color: #EDE7DE;
+    }
+
+    .slider-track {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .slide-item {
+      min-width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    .slide-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      /* Anti-blur rendering */
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
+
+    .slider-dots {
+      position: absolute;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      z-index: 10;
+    }
+
+    .slider-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .slider-dot.active {
+      background: var(--gold);
+      width: 26px;
+      border-radius: 20px;
+    }
+
+    /* Schemes Grid */
+    .schemes-wrapper {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: clamp(1.5rem, 2.5vw, 2.5rem);
+      margin-bottom: clamp(3.5rem, 6vw, 6rem);
+    }
+
+    .scheme-featured-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: clamp(1.5rem, 2.2vw, 2.2rem);
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.05);
+      position: relative;
+      overflow: hidden;
+      gap: 1.5rem;
+    }
+
+    .scheme-featured-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--maroon);
+    }
+
+    .scheme-card-top {
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-start;
+    }
+
+    .scheme-card-img {
+      width: 140px;
+      height: 140px;
+      object-fit: cover;
+      display: block;
+      background-color: #EDE7DE;
+      flex-shrink: 0;
+      border-radius: 4px;
+    }
+
+    .scheme-card-content {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      flex-grow: 1;
+    }
+
+    .scheme-card-label {
+      font-family: var(--font-serif);
+      font-size: 0.74rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--maroon);
+    }
+
+    .scheme-card-title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.25rem, 1.8vw, 1.6rem);
+      font-weight: 700;
+      color: var(--text-black);
+      line-height: 1.25;
+    }
+
+    .scheme-card-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .scheme-card-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      border-top: 1px dashed rgba(128, 0, 32, 0.15);
+      padding-top: 1.2rem;
+      flex-wrap: wrap;
+    }
+
+    .scheme-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn-scheme-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--maroon);
+      color: #FFFFFF;
+      font-family: var(--font-sans);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.75rem 1.3rem;
+      text-decoration: none;
+    }
+
+    .btn-scheme-enroll {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--gold);
+      color: #111111;
+      font-family: var(--font-sans);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.75rem 1.3rem;
+      text-decoration: none;
+      box-shadow: 0 4px 15px rgba(212,175,55,0.3);
+    }
+
+    .scheme-card-qr-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0.8rem;
+      background: var(--bg-cream);
+      border: 1px dashed rgba(128, 0, 32, 0.3);
+      text-align: center;
+      min-width: 105px;
+    }
+
+    .scheme-card-qr-box img {
+      width: 78px;
+      height: 78px;
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+
+    .scheme-card-qr-box span {
+      font-family: var(--font-serif);
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--maroon);
+    }
+
+    /* Headings */
+    .section-header {
+      margin-bottom: clamp(1.8rem, 3vw, 2.8rem);
+    }
+
+    .section-label {
+      font-family: var(--font-serif);
+      font-size: 0.8rem;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--maroon);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.85rem, 3.2vw, 2.7rem);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    /* Collections */
+    .collections {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: clamp(1.8rem, 3vw, 3rem);
+      margin-bottom: clamp(4rem, 6vw, 6rem);
+    }
+
+    .collection-card {
+      text-decoration: none;
+      color: var(--text-black);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      background: #FFFFFF;
+      padding: 1rem;
+      border: 1px solid var(--border);
+      transition: transform 0.3s ease;
+    }
+
+    .collection-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .image-box {
+      width: 100%;
+      height: clamp(340px, 34vw, 460px);
+      overflow: hidden;
+      background-color: #EDE7DE;
+      margin-bottom: 1.2rem;
+    }
+
+    .image-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .collection-title {
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+
+    .collection-desc {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      flex-grow: 1;
+      line-height: 1.6;
+    }
+
+    .collection-link {
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--maroon);
+    }
+
+    /* Statement & Map */
+    .statement {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: clamp(2.5rem, 4vw, 3.5rem) 0;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: clamp(2rem, 3.5vw, 3.5rem);
+      align-items: center;
+      margin-bottom: clamp(3.5rem, 6vw, 6rem);
+    }
+
+    .statement-content {
+      display: flex;
+      flex-direction: column;
+      gap: 1.8rem;
+    }
+
+    .statement-quote {
+      font-family: var(--font-serif);
+      font-size: clamp(1.35rem, 2.2vw, 1.85rem);
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--text-black);
+    }
+
+    .statement-details {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    .contact-line {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-black);
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .contact-line:hover {
+      color: var(--maroon);
+    }
+
+    .compact-map-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      padding: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .compact-map-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .compact-map-header .map-label {
+      font-family: var(--font-serif);
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--maroon);
+    }
+
+    .compact-map-header a {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+
+    .compact-map-wrapper {
+      width: 100%;
+      height: 190px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background-color: #EDE7DE;
+    }
+
+    .compact-map-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+    }
+
+    /* Dark Maroon Footer */
+    footer {
+      background-color: var(--maroon-dark);
+      color: var(--text-cream);
+      padding: 4.5rem clamp(1.25rem, 4vw, 4rem) 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+      margin-top: 2rem;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2.5rem;
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .footer-col {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .footer-col-title {
+      font-family: var(--font-serif);
+      font-size: 0.95rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .footer-links a {
+      font-size: 0.9rem;
+      color: var(--text-cream);
+      opacity: 0.9;
+      text-decoration: none;
+    }
+
+    .footer-links a:hover {
+      color: var(--gold);
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .social-icons a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      color: var(--text-cream);
+      border-radius: 50%;
+      text-decoration: none;
+    }
+
+    .social-icons a svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    .social-icons a:hover {
+      background: var(--gold);
+      color: var(--maroon-dark);
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      color: var(--text-cream);
+      opacity: 0.85;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .footer-brand {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      color: var(--gold);
+      font-weight: 700;
+      letter-spacing: 0.12em;
+    }
+
+    @media (max-width: 900px) {
+      .schemes-wrapper {
+        grid-template-columns: 1fr;
+      }
+      .statement {
+        grid-template-columns: 1fr;
+      }
+      .footer-bottom {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="custom-cursor cursor-dot" id="cursorDot"></div>
+  <div class="custom-cursor cursor-ring" id="cursorRing"></div>
+
+  <div class="page-wrapper">
+    
+    <!-- 2.35:1 Slider -->
+    <div class="hero-slider-container" id="heroSlider">
+      <div class="slider-track" id="sliderTrack">
+        <div class="slide-item">
+          <img src="https://i.pinimg.com/736x/02/99/eb/0299eb634a5d90fb6e3a84587c0b415a.jpg" alt="Slide 1" loading="eager" />
+        </div>
+        <div class="slide-item">
+          <img src="https://i.pinimg.com/736x/59/0c/93/590c9307d61abbafaa9f0a2b6069115d.jpg" alt="Slide 2" loading="lazy" />
+        </div>
+        <div class="slide-item">
+          <img src="https://i.pinimg.com/736x/02/99/eb/0299eb634a5d90fb6e3a84587c0b415a.jpg" alt="Slide 3" loading="lazy" />
+        </div>
+        <div class="slide-item">
+          <img src="https://i.pinimg.com/736x/59/0c/93/590c9307d61abbafaa9f0a2b6069115d.jpg" alt="Slide 4" loading="lazy" />
+        </div>
+      </div>
+      <div class="slider-dots" id="sliderDots">
+        <span class="slider-dot active" data-index="0"></span>
+        <span class="slider-dot" data-index="1"></span>
+        <span class="slider-dot" data-index="2"></span>
+        <span class="slider-dot" data-index="3"></span>
+      </div>
+    </div>
+
+    <main class="content-container">
+
+      <!-- Side-by-Side Schemes -->
+      <div class="schemes-wrapper">
+        <section class="scheme-featured-card">
+          <div class="scheme-card-top">
+            <img src="https://i.pinimg.com/736x/e0/2d/25/e02d25f6a4cfc5970b015b7a951fa722.jpg" alt="Golden Rose Magic Scheme" class="scheme-card-img" loading="lazy" />
+            <div class="scheme-card-content">
+              <span class="scheme-card-label">Monthly Savings Plan</span>
+              <h2 class="scheme-card-title">Golden Rose Magic Scheme</h2>
+              <p class="scheme-card-desc">Plan your gold purchases effortlessly with smart monthly contributions and exclusive value-add benefits.</p>
+            </div>
+          </div>
+          <div class="scheme-card-bottom">
+            <div class="scheme-btn-group">
+              <a href="https://www.sumanjewellers.co.in/grms" target="_blank" class="btn-scheme-primary">Explore Scheme</a>
+              <a href="https://www.sumanjewellers.co.in/forms" target="_blank" class="btn-scheme-enroll">Enroll Now</a>
+            </div>
+            <div class="scheme-card-qr-box">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https%3A%2F%2Fwww.sumanjewellers.co.in%2Fabout%2FKitty" alt="QR Magic Scheme" loading="lazy" />
+              <span>Scan To View</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="scheme-featured-card">
+          <div class="scheme-card-top">
+            <img src="https://i.pinimg.com/736x/e0/2d/25/e02d25f6a4cfc5970b015b7a951fa722.jpg" alt="12+1 Golden Rose Assured" class="scheme-card-img" loading="lazy" />
+            <div class="scheme-card-content">
+              <span class="scheme-card-label">Exclusive Kitty Plan</span>
+              <h2 class="scheme-card-title">12+1 Golden Rose Assured</h2>
+              <p class="scheme-card-desc">Our assured 12+1 monthly kitty plan designed to maximize your savings and reward your loyalty securely.</p>
+            </div>
+          </div>
+          <div class="scheme-card-bottom">
+            <div class="scheme-btn-group">
+              <a href="https://www.sumanjewellers.co.in/gras" target="_blank" class="btn-scheme-primary">Explore Kitty Plan</a>
+              <a href="https://www.sumanjewellers.co.in/forms" target="_blank" class="btn-scheme-enroll">Enroll Now</a>
+            </div>
+            <div class="scheme-card-qr-box">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https%3A%2F%2Fwww.sumanjewellers.co.in%2Fabout%2Fgolden-rose-assured" alt="QR Kitty" loading="lazy" />
+              <span>Scan To View</span>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Collections -->
+      <div class="section-header">
+        <span class="section-label">Collections</span>
+        <h2 class="section-title">Core Verticals</h2>
+      </div>
+
+      <div class="collections">
+        <a href="https://wa.me/917840000934?text=Inquiry%20regarding%20Diamond%20Jewellery" target="_blank" class="collection-card">
+          <div class="image-box">
+            <img src="https://i.pinimg.com/1200x/9e/e6/ad/9ee6adb0cf21cbc2d399ebd5f8049828.jpg" alt="Diamond Jewellery" loading="lazy" />
+          </div>
+          <h3 class="collection-title">Diamond Jewellery</h3>
+          <p class="collection-desc">Certified natural solitaires, uncut diamond sets, and bespoke luxury adornments.</p>
+          <span class="collection-link">Explore Line →</span>
+        </a>
+
+        <a href="https://wa.me/917840000934?text=Inquiry%20regarding%20Gold%20Jewellery" target="_blank" class="collection-card">
+          <div class="image-box">
+            <img src="https://i.pinimg.com/1200x/ae/d0/92/aed09224fd28061c3db62028beb4ea4a.jpg" alt="Gold Jewellery" loading="lazy" />
+          </div>
+          <h3 class="collection-title">Gold Jewellery</h3>
+          <p class="collection-desc">Hallmarked 22K & 18K bridal jewellery, antique heritage motifs, and daily essentials.</p>
+          <span class="collection-link">Explore Line →</span>
+        </a>
+
+        <a href="https://wa.me/917840000934?text=Inquiry%20regarding%20Silver%20Jewellery" target="_blank" class="collection-card">
+          <div class="image-box">
+            <img src="https://i.pinimg.com/736x/56/03/1e/56031ec7216fb7156081f47c1a153f52.jpg" alt="Silver Jewellery" loading="lazy" />
+          </div>
+          <h3 class="collection-title">Silver Jewellery</h3>
+          <p class="collection-desc">925 sterling silver artifacts, luxury festive gifting, and handcrafted ornaments.</p>
+          <span class="collection-link">Explore Line →</span>
+        </a>
+      </div>
+
+      <!-- Statement & Compact Map -->
+      <section class="statement">
+        <div class="statement-content">
+          <div class="statement-quote">TRUSTED JEWELLERY FOR GENERATIONS OF GURGAON FAMILIES.</div>
+          <div class="statement-details">
+            <a href="mailto:info@sumanjewellers.com" class="contact-line">info@sumanjewellers.com</a>
+            <a href="https://wa.me/917840000934?text=Hello%20Suman%20Jewellers" target="_blank" class="contact-line">WhatsApp: +91 78400 00934</a>
+            <a href="tel:+917840000934" class="contact-line">Call: +91 78400 00934</a>
+          </div>
+        </div>
+
+        <div class="compact-map-card">
+          <div class="compact-map-header">
+            <span class="map-label">Store Location</span>
+            <a href="https://maps.app.goo.gl/iAv32xCsxuh1K7pa8" target="_blank">Open Maps ↗</a>
+          </div>
+          <div class="compact-map-wrapper">
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d224245.71337558722!2d76.91576394757853!3d28.574588783515402!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d183689386bfb%3A0x2260771da1d9569b!2sSuman%20Jewellers!5e0!3m2!1sen!2sin!4v1787598897430!5m2!1sen!2sin" 
+              allowfullscreen="" loading="lazy">
+            </iframe>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Dark Maroon Footer -->
+    <footer>
+      <div class="footer-top">
+        <div class="footer-col">
+          <span class="footer-brand">SUMAN JEWELLERS</span>
+          <p style="font-size: 0.9rem; opacity: 0.85;">Exquisite hallmarked gold, certified diamonds, and fine silver artistry since 1996.</p>
+        </div>
+        <div class="footer-col">
+          <span class="footer-col-title">Quick Links</span>
+          <div class="footer-links">
+            <a href="https://www.sumanjewellers.co.in/collection" target="_blank">Collection</a>
+            <a href="https://maps.app.goo.gl/iAv32xCsxuh1K7pa8" target="_blank">Visit Store</a>
+            <a href="https://www.sumanjewellers.co.in/about/contact-us" target="_blank">Contact Us</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <span class="footer-col-title">Schemes</span>
+          <div class="footer-links">
+            <a href="https://www.sumanjewellers.co.in/gras" target="_blank">Monthly Kitty (12+1)</a>
+            <a href="https://www.sumanjewellers.co.in/grms" target="_blank">Magic Scheme</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>SUMAN JEWELLERS</span>
+        <span>&copy; 2026 Suman Jewellers. All Rights Reserved.</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Cursor
+      const dot = document.getElementById('cursorDot');
+      const ring = document.getElementById('cursorRing');
+      let mX = 0, mY = 0, rX = 0, rY = 0;
+
+      window.addEventListener('mousemove', e => {
+        mX = e.clientX; mY = e.clientY;
+        dot.style.transform = `translate(${mX}px, ${mY}px) translate(-50%, -50%)`;
+      });
+
+      function render() {
+        rX += (mX - rX) * 0.2;
+        rY += (mY - rY) * 0.2;
+        ring.style.transform = `translate(${rX}px, ${rY}px) translate(-50%, -50%)`;
+        requestAnimationFrame(render);
+      }
+      requestAnimationFrame(render);
+
+      // Slider Logic (3s timer + pause on hover)
+      const track = document.getElementById('sliderTrack');
+      const dots = document.querySelectorAll('.slider-dot');
+      const slider = document.getElementById('heroSlider');
+      let current = 0;
+      let timer;
+
+      function goTo(idx) {
+        current = idx;
+        track.style.transform = `translateX(-${current * 100}%)`;
+        dots.forEach(d => d.classList.remove('active'));
+        dots[current].classList.add('active');
+      }
+
+      function next() {
+        current = (current + 1) % 4;
+        goTo(current);
+      }
+
+      function start() { timer = setInterval(next, 3000); }
+      function stop() { clearInterval(timer); }
+
+      dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.index)));
+      slider.addEventListener('mouseenter', stop);
+      slider.addEventListener('mouseleave', start);
+      start();
+    });
+  </script>
+</body>
+</html>
