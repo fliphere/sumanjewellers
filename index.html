@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>Suman Jewellers</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    @font-face {
+      font-family: 'Trajan Pro';
+      src: local('Trajan Pro Regular'), local('Trajan Pro'), local('TrajanPro-Regular');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root {
+      --bg-cream: #FAF8F5;
+      --bg-card: #FFFFFF;
+      --border: rgba(128, 0, 32, 0.12);
+      --maroon: #800020;
+      --maroon-dark: #4a0012;
+      --maroon-hover: #5a0016;
+      --gold: #D4AF37;
+      --text-black: #111111;
+      --text-muted: #555555;
+      --text-cream: #F5EFEB;
+      --font-serif: 'Trajan Pro', 'Cinzel', 'Cormorant Garamond', serif;
+      --font-sans: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    @media (min-width: 900px) {
+      body, a, button {
+        cursor: none !important;
+      }
+    }
+
+    ::selection {
+      background-color: var(--maroon);
+      color: #FFFFFF;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      background-color: var(--bg-cream);
+      color: var(--text-black);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Custom Cursor Magic */
+    .custom-cursor {
+      pointer-events: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      border-radius: 50%;
+      transition: transform 0.15s ease-out, width 0.2s, height 0.2s, background-color 0.2s;
+      z-index: 99999;
+      transform: translate(-50%, -50%);
+    }
+
+    .cursor-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--maroon);
+    }
+
+    .cursor-ring {
+      width: 36px;
+      height: 36px;
+      border: 1px solid rgba(128, 0, 32, 0.4);
+      background-color: rgba(212, 175, 55, 0.05);
+    }
+
+    body.hovering .cursor-ring {
+      width: 56px;
+      height: 56px;
+      background-color: rgba(128, 0, 32, 0.08);
+      border-color: var(--gold);
+    }
+
+    /* Scroll Magic Reveal Animations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .page-wrapper {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content-container {
+      width: 100%;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 clamp(1.25rem, 4vw, 4rem) 4rem;
+    }
+
+    /* Hero Slider Container (Exact 2.35:1 Widescreen Ratio) */
+    .hero-slider-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 2.35 / 1;
+      overflow: hidden;
+      margin-bottom: clamp(2.5rem, 4vw, 4.5rem);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      background-color: #EDE7DE;
+    }
+
+    .slider-track {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .slide-item {
+      min-width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    .slide-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+
+    .slider-dots {
+      position: absolute;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      z-index: 10;
+    }
+
+    .slider-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .slider-dot.active {
+      background: var(--gold);
+      width: 26px;
+      border-radius: 20px;
+    }
+
+    /* Schemes Side-by-Side (Single Line Grid) */
+    .schemes-wrapper {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: clamp(1.5rem, 2.5vw, 2.5rem);
+      margin-bottom: clamp(3.5rem, 6vw, 6rem);
+    }
+
+    .scheme-featured-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: clamp(1.5rem, 2.2vw, 2.2rem);
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.05);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+      gap: 1.5rem;
+    }
+
+    .scheme-featured-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--maroon);
+      transition: width 0.3s ease;
+    }
+
+    .scheme-featured-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 50px rgba(128,0,32,0.1);
+      border-color: rgba(128,0,32,0.3);
+    }
+
+    .scheme-card-top {
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-start;
+    }
+
+    .scheme-card-img {
+      width: 140px;
+      height: 140px;
+      object-fit: cover;
+      display: block;
+      background-color: #EDE7DE;
+      flex-shrink: 0;
+      border-radius: 4px;
+      transition: transform 0.6s ease;
+    }
+
+    .scheme-featured-card:hover .scheme-card-img {
+      transform: scale(1.05);
+    }
+
+    .scheme-card-content {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      flex-grow: 1;
+    }
+
+    .scheme-card-label {
+      font-family: var(--font-serif);
+      font-size: 0.74rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--maroon);
+    }
+
+    .scheme-card-title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.25rem, 1.8vw, 1.6rem);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: var(--text-black);
+      line-height: 1.25;
+    }
+
+    .scheme-card-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .scheme-card-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      border-top: 1px dashed rgba(128, 0, 32, 0.15);
+      padding-top: 1.2rem;
+      flex-wrap: wrap;
+    }
+
+    .scheme-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn-scheme-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--maroon);
+      color: #FFFFFF;
+      font-family: var(--font-sans);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.75rem 1.3rem;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .btn-scheme-primary:hover {
+      background: var(--text-black);
+      transform: translateX(4px);
+    }
+
+    .btn-scheme-enroll {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--gold);
+      color: #111111;
+      font-family: var(--font-sans);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.75rem 1.3rem;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(212,175,55,0.3);
+    }
+
+    .btn-scheme-enroll:hover {
+      background: var(--text-black);
+      color: #FFFFFF;
+      transform: translateX(4px);
+    }
+
+    .scheme-card-qr-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0.8rem;
+      background: var(--bg-cream);
+      border: 1px dashed rgba(128, 0, 32, 0.3);
+      text-align: center;
+      min-width: 105px;
+      transition: background 0.3s;
+    }
+
+    .scheme-card-qr-box:hover {
+      background: #FFFFFF;
+    }
+
+    .scheme-card-qr-box img {
+      width: 78px;
+      height: 78px;
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+
+    .scheme-card-qr-box span {
+      font-family: var(--font-serif);
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--maroon);
+    }
+
+    /* Section Headings */
+    .section-header {
+      margin-bottom: clamp(1.8rem, 3vw, 2.8rem);
+    }
+
+    .section-label {
+      font-family: var(--font-serif);
+      font-size: 0.8rem;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--maroon);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.85rem, 3.2vw, 2.7rem);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    /* Collections Grid */
+    .collections {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: clamp(1.8rem, 3vw, 3rem);
+      margin-bottom: clamp(4rem, 6vw, 6rem);
+    }
+
+    .collection-card {
+      text-decoration: none;
+      color: var(--text-black);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      background: #FFFFFF;
+      padding: 1rem;
+      border: 1px solid var(--border);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .collection-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+      border-color: var(--maroon);
+    }
+
+    .image-box {
+      width: 100%;
+      height: clamp(340px, 34vw, 460px);
+      overflow: hidden;
+      background-color: #EDE7DE;
+      margin-bottom: 1.2rem;
+      position: relative;
+    }
+
+    .image-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .collection-card:hover img {
+      transform: scale(1.06);
+    }
+
+    .collection-title {
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      margin-bottom: 0.4rem;
+    }
+
+    .collection-desc {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      flex-grow: 1;
+      line-height: 1.6;
+    }
+
+    .collection-link {
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--maroon);
+      transition: gap 0.3s ease, color 0.3s ease;
+    }
+
+    .collection-card:hover .collection-link {
+      gap: 12px;
+      color: var(--text-black);
+    }
+
+    /* Statement & Compact Side Map Section */
+    .statement {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: clamp(2.5rem, 4vw, 3.5rem) 0;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: clamp(2rem, 3.5vw, 3.5rem);
+      align-items: center;
+      margin-bottom: clamp(3.5rem, 6vw, 6rem);
+    }
+
+    .statement-content {
+      display: flex;
+      flex-direction: column;
+      gap: 1.8rem;
+    }
+
+    .statement-quote {
+      font-family: var(--font-serif);
+      font-size: clamp(1.35rem, 2.2vw, 1.85rem);
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      line-height: 1.4;
+      color: var(--text-black);
+    }
+
+    .statement-details {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    .contact-line {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-black);
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 700;
+      transition: color 0.2s, transform 0.2s;
+    }
+
+    .contact-line:hover {
+      color: var(--maroon);
+      transform: translateX(4px);
+    }
+
+    /* Compact Location Side Box */
+    .compact-map-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      padding: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.04);
+    }
+
+    .compact-map-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .compact-map-header .map-label {
+      font-family: var(--font-serif);
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--maroon);
+    }
+
+    .compact-map-header a {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .compact-map-header a:hover {
+      color: var(--maroon);
+    }
+
+    .compact-map-wrapper {
+      width: 100%;
+      height: 190px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background-color: #EDE7DE;
+      position: relative;
+    }
+
+    .compact-map-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+    }
+
+    /* Footer - Dark Maroon & Creamy White */
+    footer {
+      background-color: var(--maroon-dark);
+      color: var(--text-cream);
+      padding: 4.5rem clamp(1.25rem, 4vw, 4rem) 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+      margin-top: 2rem;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2.5rem;
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .footer-col {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .footer-col-title {
+      font-family: var(--font-serif);
+      font-size: 0.95rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .footer-links a {
+      font-size: 0.9rem;
+      color: var(--text-cream);
+      opacity: 0.9;
+      text-decoration: none;
+      transition: color 0.2s ease, transform 0.2s ease, opacity 0.2s;
+      display: inline-block;
+    }
+
+    .footer-links a:hover {
+      color: var(--gold);
+      opacity: 1;
+      transform: translateX(4px);
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      margin-top: 0.5rem;
+    }
+
+    .social-icons a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      color: var(--text-cream);
+      border-radius: 50%;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      text-decoration: none;
+    }
+
+    .social-icons a svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    .social-icons a:hover {
+      background: var(--gold);
+      color: var(--maroon-dark);
+      border-color: var(--gold);
+      transform: translateY(-4px) rotate(8deg);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      color: var(--text-cream);
+      opacity: 0.85;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .footer-brand {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      color: var(--gold);
+      font-weight: 700;
+      letter-spacing: 0.12em;
+    }
+
+    /* Mobile Adaptations */
+    @media (max-width: 900px) {
+      .content-container {
+        padding: 0 1.25rem 3rem;
+      }
+
+      .hero-slider-container {
+        aspect-ratio: auto;
+        min-height: 220px;
+      }
+
+      .schemes-wrapper {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .scheme-card-top {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .scheme-card-bottom {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .scheme-btn-group {
+        justify-content: center;
+        width: 100%;
+      }
+
+      .btn-scheme-primary, .btn-scheme-enroll {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .scheme-card-qr-box {
+        width: 100%;
+        flex-direction: row;
+        gap: 1rem;
+      }
+
+      .collections {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        margin-bottom: 3.5rem;
+      }
+
+      .image-box {
+        height: 350px;
+      }
+
+      .statement {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        padding: 2.5rem 0;
+      }
+
+      .compact-map-wrapper {
+        height: 220px;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Custom Magic Cursors -->
+  <div class="custom-cursor cursor-dot" id="cursorDot"></div>
+  <div class="custom-cursor cursor-ring" id="cursorRing"></div>
+
+  <div class="page-wrapper">
+    
+    <!-- Hero Slider Section (Locked to 2.35:1 aspect ratio) -->
+    <div class="hero-slider-container reveal" id="heroSlider">
+      <div class="slider-track" id="sliderTrack">
+        <div class="slide-item">
+          <img src="https://i.pinimg.com/736x/02/99/eb/0299eb634a5d90fb6e3a84587c0b415a.jpg" alt="Suman Jewellers Slide 1" loading="eager" />
+        </div>
+        <div class="slide-item">
+          <img src="https://i.pinimg.com/736x/59/0c/93/590c9307d61abbafaa9f0a2b6069115d.jpg" alt="Suman Jewellers Slide 2" loading="lazy" />
+        </div>
+        <div class="slide-item">
+          <img src="https://i.pinimg.com/736x/02/99/eb/0299eb634a5d90fb6e3a84587c0b415a.jpg" alt="Suman Jewellers Slide 3" loading="lazy" />
+        </div>
+        <div class="slide-item">
+          <img src="https://i.pinimg.com/736x/59/0c/93/590c9307d61abbafaa9f0a2b6069115d.jpg" alt="Suman Jewellers Slide 4" loading="lazy" />
+        </div>
+      </div>
+      <div class="slider-dots" id="sliderDots">
+        <span class="slider-dot active" data-index="0"></span>
+        <span class="slider-dot" data-index="1"></span>
+        <span class="slider-dot" data-index="2"></span>
+        <span class="slider-dot" data-index="3"></span>
+      </div>
+    </div>
+
+    <!-- Content Container -->
+    <main class="content-container">
+
+      <!-- Schemes Side-by-Side (Single Line Layout) -->
+      <div class="schemes-wrapper">
+        
+        <!-- 1st Scheme Card (Golden Rose Magic Scheme) -->
+        <section class="scheme-featured-card reveal">
+          <div class="scheme-card-top">
+            <img src="https://i.pinimg.com/736x/e0/2d/25/e02d25f6a4cfc5970b015b7a951fa722.jpg" alt="Golden Rose Magic Scheme" class="scheme-card-img" loading="lazy" />
+            <div class="scheme-card-content">
+              <span class="scheme-card-label">Monthly Jewellery Savings Plan</span>
+              <h2 class="scheme-card-title">Golden Rose Magic Scheme</h2>
+              <p class="scheme-card-desc">Plan your gold purchases effortlessly with smart monthly contributions and exclusive value-add benefits.</p>
+            </div>
+          </div>
+
+          <div class="scheme-card-bottom">
+            <div class="scheme-btn-group">
+              <a href="https://www.sumanjewellers.co.in/grms" target="_blank" class="btn-scheme-primary">
+                <span>Explore Scheme</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+              </a>
+              <a href="https://www.sumanjewellers.co.in/forms" target="_blank" class="btn-scheme-enroll">
+                <span>Enroll Now</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </a>
+            </div>
+
+            <div class="scheme-card-qr-box">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https%3A%2F%2Fwww.sumanjewellers.co.in%2Fabout%2FKitty" alt="Scan QR Code to Explore Magic Scheme" loading="lazy" />
+              <span>Scan To View</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2nd Scheme Card (12+1 Golden Rose Assured) -->
+        <section class="scheme-featured-card reveal">
+          <div class="scheme-card-top">
+            <img src="https://i.pinimg.com/736x/e0/2d/25/e02d25f6a4cfc5970b015b7a951fa722.jpg" alt="12+1 Golden Rose Assured" class="scheme-card-img" loading="lazy" />
+            <div class="scheme-card-content">
+              <span class="scheme-card-label">Exclusive Kitty Plan</span>
+              <h2 class="scheme-card-title">12+1 Golden Rose Assured</h2>
+              <p class="scheme-card-desc">Our assured 12+1 monthly kitty plan designed to maximize your savings and reward your loyalty securely.</p>
+            </div>
+          </div>
+
+          <div class="scheme-card-bottom">
+            <div class="scheme-btn-group">
+              <a href="https://www.sumanjewellers.co.in/gras" target="_blank" class="btn-scheme-primary">
+                <span>Explore Kitty Plan</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+              </a>
+              <a href="https://www.sumanjewellers.co.in/forms" target="_blank" class="btn-scheme-enroll">
+                <span>Enroll Now</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </a>
+            </div>
+
+            <div class="scheme-card-qr-box">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https%3A%2F%2Fwww.sumanjewellers.co.in%2Fabout%2Fgolden-rose-assured" alt="Scan QR Code to Explore Kitty" loading="lazy" />
+              <span>Scan To View</span>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Collections Heading -->
+      <div class="section-header reveal">
+        <span class="section-label">Collections</span>
+        <h2 class="section-title">Core Verticals</h2>
+      </div>
+
+      <!-- Collections Grid -->
+      <div class="collections">
+        <!-- 01 Diamond Jewellery -->
+        <a href="https://wa.me/917840000934?text=Inquiry%20regarding%20Diamond%20Jewellery" target="_blank" class="collection-card reveal">
+          <div class="image-box">
+            <img src="https://i.pinimg.com/1200x/9e/e6/ad/9ee6adb0cf21cbc2d399ebd5f8049828.jpg" alt="Diamond Jewellery" loading="lazy" />
+          </div>
+          <h3 class="collection-title">Diamond Jewellery</h3>
+          <p class="collection-desc">Certified natural solitaires, uncut diamond sets, and bespoke luxury adornments.</p>
+          <span class="collection-link">Explore Line <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg></span>
+        </a>
+
+        <!-- 02 Gold Jewellery -->
+        <a href="https://wa.me/917840000934?text=Inquiry%20regarding%20Gold%20Jewellery" target="_blank" class="collection-card reveal">
+          <div class="image-box">
+            <img src="https://i.pinimg.com/1200x/ae/d0/92/aed09224fd28061c3db62028beb4ea4a.jpg" alt="Gold Jewellery" loading="lazy" />
+          </div>
+          <h3 class="collection-title">Gold Jewellery</h3>
+          <p class="collection-desc">Hallmarked 22K & 18K bridal jewellery, antique heritage motifs, and daily essentials.</p>
+          <span class="collection-link">Explore Line <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg></span>
+        </a>
+
+        <!-- 03 Silver Jewellery -->
+        <a href="https://wa.me/917840000934?text=Inquiry%20regarding%20Silver%20Jewellery" target="_blank" class="collection-card reveal">
+          <div class="image-box">
+            <img src="https://i.pinimg.com/736x/56/03/1e/56031ec7216fb7156081f47c1a153f52.jpg" alt="Silver Jewellery" loading="lazy" />
+          </div>
+          <h3 class="collection-title">Silver Jewellery</h3>
+          <p class="collection-desc">925 sterling silver artifacts, luxury festive gifting, and handcrafted ornaments.</p>
+          <span class="collection-link">Explore Line <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg></span>
+        </a>
+      </div>
+
+      <!-- Statement & Compact Location Box (Side-by-Side) -->
+      <section class="statement reveal">
+        <div class="statement-content">
+          <div class="statement-quote">
+            TRUSTED JEWELLERY FOR GENERATIONS OF GURGAON FAMILIES.
+          </div>
+          <div class="statement-details">
+            <a href="mailto:info@sumanjewellers.com" class="contact-line">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--maroon);"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              <span>info@sumanjewellers.com</span>
+            </a>
+            <a href="https://wa.me/917840000934?text=Hello%20Suman%20Jewellers" target="_blank" class="contact-line">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #25D366;"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+              <span>WhatsApp: +91 78400 00934</span>
+            </a>
+            <a href="tel:+917840000934" class="contact-line">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--maroon);"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              <span>Call: +91 78400 00934</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Chhota Location Box -->
+        <div class="compact-map-card">
+          <div class="compact-map-header">
+            <span class="map-label">Store Location</span>
+            <a href="https://maps.app.goo.gl/iAv32xCsxuh1K7pa8" target="_blank">Open in Maps ↗</a>
+          </div>
+          <div class="compact-map-wrapper">
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d224245.71337558722!2d76.91576394757853!3d28.574588783515402!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d183689386bfb%3A0x2260771da1d9569b!2sSuman%20Jewellers!5e0!3m2!1sen!2sin!4v1787598897430!5m2!1sen!2sin" 
+              allowfullscreen="" 
+              loading="lazy" 
+              referrerpolicy="strict-origin-when-cross-origin">
+            </iframe>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Dark Maroon & Creamic White Footer -->
+    <footer class="reveal">
+      <div class="footer-top">
+        <!-- Col 1: Brand Info -->
+        <div class="footer-col">
+          <span class="footer-brand">SUMAN JEWELLERS</span>
+          <p style="font-size: 0.9rem; color: var(--text-cream); opacity: 0.85; line-height: 1.6;">Exquisite hallmarked gold, certified diamonds, and fine silver artistry since 1996.</p>
+          <div class="social-icons">
+            <a href="https://www.instagram.com/sumanjewellers1996/" target="_blank" title="Instagram">
+              <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            </a>
+            <a href="https://facebook.com" target="_blank" title="Facebook">
+              <svg viewBox="0 0 24 24"><path d="M9 8H6v4h3v12h5V12h3.642L18 8h-4V6.333C14 5.378 14.5 5 15.5 5H18V0h-3.808C10.59 0 9 1.581 9 4.615V8z"/></svg>
+            </a>
+            <a href="https://youtube.com" target="_blank" title="YouTube">
+              <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+            <a href="https://wa.me/917840000934?text=Hello%20Suman%20Jewellers" target="_blank" title="WhatsApp">
+              <svg viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Col 2: Quick Links -->
+        <div class="footer-col">
+          <span class="footer-col-title">Quick Links</span>
+          <div class="footer-links">
+            <a href="https://www.sumanjewellers.co.in/collection" target="_blank">Collection</a>
+            <a href="https://maps.app.goo.gl/iAv32xCsxuh1K7pa8" target="_blank">Visit Store</a>
+            <a href="https://www.sumanjewellers.co.in/about/blogs" target="_blank">Blogs</a>
+            <a href="https://www.sumanjewellers.co.in/about/contact-us" target="_blank">Contact Us</a>
+          </div>
+        </div>
+
+        <!-- Col 3: Kitty & Savings -->
+        <div class="footer-col">
+          <span class="footer-col-title">Schemes & Kitty</span>
+          <div class="footer-links">
+            <a href="https://www.sumanjewellers.co.in/gras" target="_blank">Monthly Kitty (12+1)</a>
+            <a href="https://www.sumanjewellers.co.in/grms" target="_blank">Lucky Draw / Magic Scheme</a>
+            <a href="https://www.sumanjewellers.co.in/forms" target="_blank">Enrollment Portal</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span class="footer-brand">SUMAN JEWELLERS</span>
+        <span>&copy; 2026 Suman Jewellers. All Rights Reserved.</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Custom Cursor Magic
+      const dot = document.getElementById('cursorDot');
+      const ring = document.getElementById('cursorRing');
+      
+      let mouseX = 0, mouseY = 0;
+      let ringX = 0, ringY = 0;
+
+      window.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        dot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+      });
+
+      function renderCursor() {
+        ringX += (mouseX - ringX) * 0.2;
+        ringY += (mouseY - ringY) * 0.2;
+        ring.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
+        requestAnimationFrame(renderCursor);
+      }
+      requestAnimationFrame(renderCursor);
+
+      const interactables = document.querySelectorAll('a, button, .scheme-featured-card, .collection-card, .slider-dot');
+      interactables.forEach(el => {
+        el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+        el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+      });
+
+      // Scroll Reveal
+      const reveals = document.querySelectorAll('.reveal');
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12 });
+
+      reveals.forEach(r => observer.observe(r));
+
+      // Hero Slider (Autoplay 3s, Pause on Hover)
+      const track = document.getElementById('sliderTrack');
+      const dots = document.querySelectorAll('.slider-dot');
+      const sliderContainer = document.getElementById('heroSlider');
+      let currentSlide = 0;
+      const totalSlides = 4;
+      let slideInterval;
+
+      function goToSlide(index) {
+        currentSlide = index;
+        track.style.transform = `translateX(-${currentSlide * 100}%)`;
+        dots.forEach(d => d.classList.remove('active'));
+        dots[currentSlide].classList.add('active');
+      }
+
+      function nextSlide() {
+        currentSlide = (currentSlide + 1) % totalSlides;
+        goToSlide(currentSlide);
+      }
+
+      function startSlider() {
+        slideInterval = setInterval(nextSlide, 3000);
+      }
+
+      function stopSlider() {
+        clearInterval(slideInterval);
+      }
+
+      dots.forEach(dot => {
+        dot.addEventListener('click', () => {
+          const idx = parseInt(dot.getAttribute('data-index'));
+          goToSlide(idx);
+        });
+      });
+
+      sliderContainer.addEventListener('mouseenter', stopSlider);
+      sliderContainer.addEventListener('mouseleave', startSlider);
+
+      startSlider();
+    });
+  </script>
+</body>
+</html>
